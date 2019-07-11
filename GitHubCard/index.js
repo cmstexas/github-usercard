@@ -3,25 +3,29 @@
            https://api.github.com/users/<your name>
 */
 
-const card = document.querySelector('.card')
 
-const name = 'Daniel Frehner'
 
-axios.get('https://api.github.com/users/tetondan')
-  .then(data => {
+const card = document.querySelector('.cards')
+
+const followersArray = ['cmstexas', 'tetondan', 'jondscott21', 'Bigorange8801', 'leananepari', 'paintedlbird7', 'sethnadu', 'davindar', 'arodri04'];
+
+followersArray.forEach(users => {
+  
+  axios.get(`https://api.github.com/users/${users}`)
+  .then(response => {
     //Handles success, here's where we get the results from the server
-    console.log('response', data)
+    console.log('data', response.data);
+    card.appendChild(createCard(response.data))
+  })
 
-    const cards = data.data.message
-    cards.forEach( indivCards => {
-      const element = createCard(indivCards, name)
-      entry.appendChild(element)
-    })
+.catch(error => {
+  //handles failure//
+  console.log('ERROR:', error)
 })
-  .catch(error => {
-    //handles failure//
-    console.log('ERROR:', error)
-})
+  })
+
+
+
 
 /* Step 2: Inspect and study the data coming back, this is YOUR 
    github info! You will need to understand the structure of this 
@@ -51,36 +55,64 @@ axios.get('https://api.github.com/users/tetondan')
 */
 
 
-const followersArray = [];
-
-//creates and returns DOM node//
-
-function createCard(imageUrl, type) {
-  
-  //create the elements//
-  const card = document.createElement('div')
-  const img = document.createElement('img')
-  const title = document.createElement('h3')
-
-  //set the styles
-  card.classList.add('')
-  img.classList.add('')
-
-  //set the content
-  img.src = imageUrl
-  title.textContent = 'Breed: ${breed}'
-
-  //put together
-
-  card.appendChild(img)
-  card.appendChild(title)
-
-  return card
-}
 
 /* Step 4: Pass the data received from Github into your function, 
            create a new component and add it to the DOM as a child of .cards
 */
+
+//creates and returns DOM node//
+
+function createCard(object) {
+  
+  //create the elements//
+  const card = document.createElement('div');
+  const image = document.createElement('img');
+  const cardInfo = document.createElement('div');
+  const personName = document.createElement('h3');
+  const userName = document.createElement('p');
+  const userLocation = document.createElement('p');
+  const profile = document.createElement('p');
+  const locAddress = document.createElement('a');
+  const followers = document.createElement('p');
+  const following = document.createElement('p');
+  const userBio = document.createElement('p');
+
+  
+  //set class names
+  card.classList.add('card')
+  cardInfo.classList.add('card-info')
+  personName.classList.add('name')
+  userName.classList.add('username')
+
+  //set userdata
+  image.src = object.avatar_url;
+  profile.href = object.html_url;
+
+  // set text content
+  personName.textContent = `Name: ${object.name}`;
+  userName.textContent = `User Name: ${object.login}`;
+  userLocation.textContent = `Location: ${object.location}`;
+  profile.textContent = object.html_url;
+  followers.textContent = `Followers: ${object.followers}`;
+  following.textContent = `Following: ${object.following}`;
+  userBio.textContent = `Bio: ${object.bio}`;
+
+
+  //setup structure of elements
+  card.appendChild(image)
+  card.appendChild(cardInfo)
+  cardInfo.appendChild(personName)
+  cardInfo.appendChild(userName)
+  cardInfo.appendChild(userLocation)
+  cardInfo.appendChild(profile)
+  cardInfo.appendChild(locAddress)
+  cardInfo.appendChild(followers)
+  cardInfo.appendChild(following)
+  cardInfo.appendChild(userBio)
+
+  return card
+}
+
 
 /* Step 5: Now that you have your own card getting added to the DOM, either 
           follow this link in your browser https://api.github.com/users/<Your github name>/followers 
